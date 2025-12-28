@@ -18,7 +18,10 @@ private:
     // access the processor object that created it.
     AudioPluginAudioProcessor& processorRef;
     juce::Slider volume;
+    juce::Label volumeLabel  {"VolumeLabel", "Volume"};
     juce::TextButton bypass;
+
+    juce::AudioProcessorValueTreeState::SliderAttachment volumeAttachment;
     void initializeVolume();
     void initializeBypass();
 
