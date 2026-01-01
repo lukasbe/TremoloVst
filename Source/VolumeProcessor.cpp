@@ -11,5 +11,5 @@ void VolumeProcessor::prepare(const float volume)
 
 void VolumeProcessor::process(float* output, const int sample) const
 {
-    output[sample] = _volume * output[sample];
+    // output[sample] = _volume * output[sample];
 }

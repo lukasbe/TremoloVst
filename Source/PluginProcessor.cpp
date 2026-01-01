@@ -7,11 +7,11 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     : AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
 #if ! JucePlugin_IsSynth
-        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+          .withInput("Input", juce::AudioChannelSet::stereo(), true)
 #endif
-        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-    ), state(*this, nullptr, "parameters", createParameterLayout())
+      ), state(*this, nullptr, "parameters", createParameterLayout())
 {
 }
 
@@ -91,6 +91,9 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
     // initialisation that you need..
     juce::ignoreUnused(sampleRate, samplesPerBlock);
     volumeProcessor.prepare(state.getRawParameterValue("volume")->load());
+    tremoloProcessor.prepare(sampleRate,
+    state.getRawParameterValue("rate")->load(),
+    state.getRawParameterValue("depth")->load());
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -142,6 +145,8 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         buffer.clear(i, 0, buffer.getNumSamples());
 
     volumeProcessor.setVolume(state.getRawParameterValue("volume")->load());
+    tremoloProcessor.setRate(state.getRawParameterValue("rate")->load());
+    tremoloProcessor.setDepth(state.getRawParameterValue("depth")->load());
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -155,6 +160,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         {
             float* channelData = buffer.getWritePointer(channel);
             volumeProcessor.process(channelData, sample);
+            tremoloProcessor.process(channelData, sample);
         }
     }
 }
@@ -196,6 +202,8 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameterLayout()
 {
     return {
-        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"volume"}, "Volume", 0.0, 10.0, 7.0)
+        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"volume"}, "Volume", 0.0, 10.0, 7.0),
+        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"rate"}, "Rate", 0.0, 10.0, 8.0),
+        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"depth"}, "Depth", 0.0, 10.0, 7.0)
     };
 }
