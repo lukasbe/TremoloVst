@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
+#include "PotiLookAndFeel.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor
@@ -19,20 +20,19 @@ private:
     AudioPluginAudioProcessor& processorRef;
     juce::Slider rate;
     juce::Label rateLabel  {"RateLabel", "Rate"};
+    PotiLookAndFeel rateLookAndFeel;
     juce::Slider depth;
     juce::Label depthLabel  {"DepthLabel", "Depth"};
-    juce::Slider volume;
-    juce::Label volumeLabel  {"VolumeLabel", "Volume"};
     juce::TextButton bypass;
 
-    juce::AudioProcessorValueTreeState::SliderAttachment volumeAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment rateAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment depthAttachment;
+    juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment;
 
-    void initializeVolume();
     void initializeRate();
     void initializeDepth();
     void initializeBypass();
+    juce::Image backgroundImage;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

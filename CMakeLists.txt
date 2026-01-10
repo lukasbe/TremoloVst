@@ -33,10 +33,10 @@ set(SourceFiles
         Source/PluginEditor.h
         Source/PluginProcessor.cpp
         Source/PluginProcessor.h
-        Source/VolumeProcessor.cpp
-        Source/VolumeProcessor.h
         Source/TremoloProcessor.cpp
         Source/TremoloProcessor.h
+        Source/PotiLookAndFeel.h
+        Source/PotiLookAndFeel.cpp
 )
 
 # Change these to your own preferences
@@ -69,6 +69,11 @@ target_compile_definitions(${PROJECT_NAME}
         JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
+juce_add_binary_data (PluginResources
+        SOURCES
+        resources/background.png
+)
+
 # JUCE libraries to bring into our project
 target_link_libraries(${PROJECT_NAME}
         PUBLIC
@@ -85,4 +90,6 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
+        PRIVATE
+        PluginResources
 )

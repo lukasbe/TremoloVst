@@ -7,17 +7,19 @@
 #include <algorithm>
 #include <cmath>
 
-void TremoloProcessor::prepare(const double sampleRate, const float rate, const float depth)
+void TremoloProcessor::prepare(const double sampleRate, const float rate, const float depth, const bool bypass)
 {
     _sampleRate = sampleRate;
     _phase = 0.0f;
     updatePhaseIncrement();
     setRate(rate);
     setDepth(depth);
+    setBypass(bypass);
 }
 
 void TremoloProcessor::process(float* output, const int sample)
 {
+    if (_bypass) return;
     const float lfo = std::sin(_phase);
     float mod = 0.5f + 0.5f * lfo;
     mod = std::pow(mod, 3.0f);
@@ -42,6 +44,11 @@ void TremoloProcessor::setRate(float rateHz)
 void TremoloProcessor::setDepth(float depth)
 {
     _depth = depth;
+}
+
+void TremoloProcessor::setBypass(bool bypass)
+{
+    _bypass = bypass;
 }
 
 void TremoloProcessor::updatePhaseIncrement()

@@ -3,7 +3,6 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 
 #include "TremoloProcessor.h"
-#include "VolumeProcessor.h"
 
 //==============================================================================
 class AudioPluginAudioProcessor final : public juce::AudioProcessor
@@ -20,6 +19,7 @@ public:
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void mouseDown(const juce::MouseEvent& e);
     using AudioProcessor::processBlock;
 
     //==============================================================================
@@ -50,7 +50,6 @@ public:
 private:
     juce::AudioProcessorValueTreeState state;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    VolumeProcessor volumeProcessor;
     TremoloProcessor tremoloProcessor;
 
     //==============================================================================

@@ -90,10 +90,10 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     juce::ignoreUnused(sampleRate, samplesPerBlock);
-    volumeProcessor.prepare(state.getRawParameterValue("volume")->load());
     tremoloProcessor.prepare(sampleRate,
     state.getRawParameterValue("rate")->load(),
-    state.getRawParameterValue("depth")->load());
+    state.getRawParameterValue("depth")->load(),
+    state.getRawParameterValue("bypass")->load() > 0.5f);
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -143,8 +143,6 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
-
-    volumeProcessor.setVolume(state.getRawParameterValue("volume")->load());
     tremoloProcessor.setRate(state.getRawParameterValue("rate")->load());
     tremoloProcessor.setDepth(state.getRawParameterValue("depth")->load());
 
@@ -159,7 +157,6 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
             float* channelData = buffer.getWritePointer(channel);
-            volumeProcessor.process(channelData, sample);
             tremoloProcessor.process(channelData, sample);
         }
     }
@@ -204,6 +201,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
     return {
         std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"volume"}, "Volume", 0.0, 10.0, 7.0),
         std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"rate"}, "Rate", 0.0, 10.0, 8.0),
-        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"depth"}, "Depth", 0.0, 10.0, 7.0)
+        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{"depth"}, "Depth", 0.0, 10.0, 7.0),
+        std::make_unique<juce::AudioParameterBool>(juce::ParameterID{"bypass"}, "Bypass", false)
     };
 }

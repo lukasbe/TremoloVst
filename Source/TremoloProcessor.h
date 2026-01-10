@@ -9,14 +9,17 @@
 class TremoloProcessor
 {
 public:
-    void prepare(double sampleRate, float rate, float depth);
+    void prepare(double sampleRate, float rate, float depth, bool bypass);
     void process(float* output, int sample);
 
     void setRate(float rateHz);
     void setDepth(float depth);
+    void setBypass(bool bypass);
+
 
     [[nodiscard]] float getRate() const { return _rateHz; }
     [[nodiscard]] float getDepth() const { return _depth; }
+    [[nodiscard]] float getBypass() const { return _bypass; }
 private:
     void updatePhaseIncrement();
     void advancePhase();
@@ -27,6 +30,7 @@ private:
     double _sampleRate = 44100.0;
     float _rateHz = 4.0f;
     float _depth = 0.7f;
+    bool _bypass = false;
 };
 
 #endif //TREMOLO_TREMOLOPROCESSOR_H
