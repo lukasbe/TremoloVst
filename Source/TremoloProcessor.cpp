@@ -51,7 +51,7 @@ void TremoloProcessor::setBypass(bool bypass)
     _bypass = bypass;
 }
 
-void TremoloProcessor::updatePhaseIncrement()
+void TremoloProcessor::updatePhaseIncrement() const
 {
     _phaseIncrement = static_cast<float>(
         (2.0 * M_PI * _rateHz) / _sampleRate

@@ -141,10 +141,11 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // This is here to avoid people getting screaming feedback
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear(i, 0, buffer.getNumSamples());
     tremoloProcessor.setRate(state.getRawParameterValue("rate")->load());
     tremoloProcessor.setDepth(state.getRawParameterValue("depth")->load());
+    tremoloProcessor.setBypass(state.getRawParameterValue("bypass")->load() > 0.5f);
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear(i, 0, buffer.getNumSamples());
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -179,14 +180,20 @@ void AudioPluginAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    juce::ignoreUnused(destData);
+    const std::unique_ptr xml (getState().copyState().createXml());
+    copyXmlToBinary (*xml, destData);
 }
 
 void AudioPluginAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-    juce::ignoreUnused(data, sizeInBytes);
+    std::unique_ptr<juce::XmlElement> xmlState (
+        getXmlFromBinary (data, sizeInBytes)
+    );
+
+    if (xmlState && xmlState->hasTagName (getState().state.getType()))
+    {
+        getState().replaceState (juce::ValueTree::fromXml (*xmlState));
+    }
 }
 
 //==============================================================================

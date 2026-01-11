@@ -21,7 +21,7 @@ public:
     [[nodiscard]] float getDepth() const { return _depth; }
     [[nodiscard]] float getBypass() const { return _bypass; }
 private:
-    void updatePhaseIncrement();
+    void updatePhaseIncrement() const;
     void advancePhase();
 
     mutable float _phase = 0.0f;

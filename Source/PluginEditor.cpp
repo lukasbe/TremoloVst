@@ -63,12 +63,13 @@ void AudioPluginAudioProcessorEditor::initializeDepth()
 
 void AudioPluginAudioProcessorEditor::initializeBypass()
 {
+    bypass.setClickingTogglesState(true);
     bypass.setButtonText("Bypass");
     bypass.setToggleState(false, juce::NotificationType::dontSendNotification);
     bypass.setClickingTogglesState(true);
     bypass.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
 
-    bypass.onClick = [this]
+    bypass.onStateChange = [this]
     {
         bypass.setButtonText(bypass.getToggleState() ? "Tremoloooo!" : "Bypass");
     };
